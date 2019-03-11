@@ -69,7 +69,9 @@ resource "aws_api_gateway_integration" "root" {
 resource "aws_api_gateway_deployment" "this" {
   depends_on = [
     "aws_api_gateway_method.this",
+    "aws_api_gateway_method.root",
     "aws_api_gateway_integration.this",
+    "aws_api_gateway_integration.root",
     "aws_api_gateway_resource.this",
   ]
 
