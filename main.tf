@@ -1,14 +1,14 @@
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.0.2"
+  version = "0.0.3"
 
-  source_bucket  = "${var.source_bucket}"
-  source_version = "${var.source_version}"
-  function_name  = "${var.function_name}"
+  source_bucket  = var.source_bucket
+  source_version = var.source_version
+  function_name  = var.function_name
 
-  environment_variables = "${var.environment_variables}"
+  environment_variables = var.environment_variables
 
-  access_policy_document = "${var.access_policy_document}"
+  access_policy_document = var.access_policy_document
 
   source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
 }
@@ -16,30 +16,30 @@ module "lambda" {
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
   version   = "0.1.3"
-  hostnames = ["${var.hostname}"]
+  hostnames = [var.hostname]
 }
 
 resource "aws_api_gateway_rest_api" "this" {
-  name = "${var.function_name}"
+  name = var.function_name
 }
 
 resource "aws_api_gateway_method" "this" {
-  rest_api_id   = "${aws_api_gateway_rest_api.this.id}"
-  resource_id   = "${aws_api_gateway_resource.this.id}"
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_resource.this.id
   http_method   = "ANY"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_method" "root" {
-  rest_api_id   = "${aws_api_gateway_rest_api.this.id}"
-  resource_id   = "${aws_api_gateway_rest_api.this.root_resource_id}"
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_rest_api.this.root_resource_id
   http_method   = "ANY"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_method_settings" "settings" {
-  rest_api_id = "${aws_api_gateway_rest_api.this.id}"
-  stage_name  = "${aws_api_gateway_deployment.this.stage_name}"
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  stage_name  = aws_api_gateway_deployment.this.stage_name
   method_path = "*/*"
 
   settings {
@@ -49,50 +49,51 @@ resource "aws_api_gateway_method_settings" "settings" {
 }
 
 resource "aws_api_gateway_integration" "this" {
-  rest_api_id             = "${aws_api_gateway_rest_api.this.id}"
-  resource_id             = "${aws_api_gateway_resource.this.id}"
-  http_method             = "${aws_api_gateway_method.this.http_method}"
+  rest_api_id             = aws_api_gateway_rest_api.this.id
+  resource_id             = aws_api_gateway_resource.this.id
+  http_method             = aws_api_gateway_method.this.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "${module.lambda.invoke_arn}"
+  uri                     = module.lambda.invoke_arn
 }
 
 resource "aws_api_gateway_integration" "root" {
-  rest_api_id             = "${aws_api_gateway_rest_api.this.id}"
-  resource_id             = "${aws_api_gateway_rest_api.this.root_resource_id}"
-  http_method             = "${aws_api_gateway_method.root.http_method}"
+  rest_api_id             = aws_api_gateway_rest_api.this.id
+  resource_id             = aws_api_gateway_rest_api.this.root_resource_id
+  http_method             = aws_api_gateway_method.root.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "${module.lambda.invoke_arn}"
+  uri                     = module.lambda.invoke_arn
 }
 
 resource "aws_api_gateway_deployment" "this" {
   depends_on = [
-    "aws_api_gateway_method.this",
-    "aws_api_gateway_method.root",
-    "aws_api_gateway_integration.this",
-    "aws_api_gateway_integration.root",
-    "aws_api_gateway_resource.this",
+    aws_api_gateway_method.this,
+    aws_api_gateway_method.root,
+    aws_api_gateway_integration.this,
+    aws_api_gateway_integration.root,
+    aws_api_gateway_resource.this,
   ]
 
-  rest_api_id = "${aws_api_gateway_rest_api.this.id}"
+  rest_api_id = aws_api_gateway_rest_api.this.id
   stage_name  = "prod"
-  variables   = "${var.stage_variables}"
+  variables   = var.stage_variables
 }
 
 resource "aws_api_gateway_resource" "this" {
-  rest_api_id = "${aws_api_gateway_rest_api.this.id}"
-  parent_id   = "${aws_api_gateway_rest_api.this.root_resource_id}"
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
   path_part   = "{path+}"
 }
 
 resource "aws_api_gateway_domain_name" "this" {
-  domain_name     = "${var.hostname}"
-  certificate_arn = "${module.certificate.arn}"
+  domain_name     = var.hostname
+  certificate_arn = module.certificate.arn
 }
 
 resource "aws_api_gateway_base_path_mapping" "this" {
-  api_id      = "${aws_api_gateway_rest_api.this.id}"
-  stage_name  = "${aws_api_gateway_deployment.this.stage_name}"
-  domain_name = "${aws_api_gateway_domain_name.this.domain_name}"
+  api_id      = aws_api_gateway_rest_api.this.id
+  stage_name  = aws_api_gateway_deployment.this.stage_name
+  domain_name = aws_api_gateway_domain_name.this.domain_name
 }
+

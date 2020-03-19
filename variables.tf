@@ -1,36 +1,37 @@
 variable "source_bucket" {
   description = "Bucket to use for loading Lambda source ZIP"
-  type        = "string"
+  type        = string
 }
 
 variable "source_version" {
   description = "Version of Lambda ZIP to use"
-  type        = "string"
+  type        = string
 }
 
 variable "function_name" {
   description = "Name for Lambda function"
-  type        = "string"
+  type        = string
 }
 
 variable "environment_variables" {
   description = "Variables to provide for Lambda environment"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "stage_variables" {
   description = "Variables to provide for API Gateway environment"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "access_policy_document" {
   description = "IAM policy provided to Lambda role"
-  type        = "string"
+  type        = string
 }
 
 variable "hostname" {
   description = "Hostname to use for site"
-  type        = "string"
+  type        = string
 }
+
