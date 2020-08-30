@@ -23,7 +23,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.1.12"
+  version   = "0.1.13"
   hostnames = [var.hostname]
 }
 
