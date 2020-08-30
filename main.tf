@@ -1,6 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      version = "3.4.0"
+    }
+  }
+}
+
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.0.3"
+  version = "0.0.4"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -15,7 +23,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.1.3"
+  version   = "0.1.4"
   hostnames = [var.hostname]
 }
 
