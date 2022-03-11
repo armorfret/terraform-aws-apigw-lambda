@@ -1,14 +1,15 @@
 terraform {
   required_providers {
     aws = {
-      version = "3.4.0"
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
     }
   }
 }
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.0.4"
+  version = "0.1.0"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -23,7 +24,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.1.13"
+  version   = "0.2.0"
   hostnames = [var.hostname]
 }
 
