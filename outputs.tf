@@ -3,5 +3,5 @@ output "dns_name" {
 }
 
 output "execution_arn" {
-  value = aws_api_gateway_rest_api.this.execution_arn
+  value = aws_api_gateway_deployment.this.execution_arn
 }
