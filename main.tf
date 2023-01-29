@@ -9,7 +9,7 @@ terraform {
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.1.0"
+  version = "0.2.0"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -40,11 +40,22 @@ resource "aws_api_gateway_deployment" "this" {
   }
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
+resource "aws_cloudwatch_log_group" "this" {
+  name = "${var.function_name}-apigw"
+}
+
 resource "aws_api_gateway_stage" "this" {
-  deployment_id = aws_api_gateway_deployment.this.id
-  rest_api_id   = aws_api_gateway_rest_api.this.id
-  stage_name    = "prod"
-  variables     = var.stage_variables
+  deployment_id        = aws_api_gateway_deployment.this.id
+  rest_api_id          = aws_api_gateway_rest_api.this.id
+  stage_name           = "prod"
+  variables            = var.stage_variables
+  xray_tracing_enabled = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.this.arn
+    format          = "json"
+  }
 }
 
 resource "aws_api_gateway_method_settings" "settings" {
@@ -61,6 +72,7 @@ resource "aws_api_gateway_method_settings" "settings" {
 resource "aws_api_gateway_domain_name" "this" {
   domain_name     = var.hostname
   certificate_arn = module.certificate.arn
+  security_policy = "TLS_1_2"
 }
 
 resource "aws_api_gateway_base_path_mapping" "this" {
@@ -76,9 +88,10 @@ resource "aws_api_gateway_resource" "this" {
 }
 
 resource "aws_api_gateway_method" "this" {
-  rest_api_id   = aws_api_gateway_rest_api.this.id
-  resource_id   = aws_api_gateway_resource.this.id
-  http_method   = "ANY"
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_resource.this.id
+  http_method = "ANY"
+  #tfsec:ignore:aws-api-gateway-no-public-access
   authorization = "NONE"
 }
 
