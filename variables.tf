@@ -25,6 +25,12 @@ variable "stage_variables" {
   default     = {}
 }
 
+variable "binary_media_types" {
+  description = "Media types to transmit as binary data"
+  type        = list(string)
+  default     = []
+}
+
 variable "access_policy_document" {
   description = "IAM policy provided to Lambda role"
   type        = string

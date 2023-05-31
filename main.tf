@@ -30,6 +30,8 @@ module "certificate" {
 
 resource "aws_api_gateway_rest_api" "this" {
   name = var.function_name
+
+  binary_media_types = var.binary_media_types
 }
 
 resource "aws_api_gateway_deployment" "this" {
