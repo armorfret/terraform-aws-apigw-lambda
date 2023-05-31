@@ -116,3 +116,19 @@ resource "aws_api_gateway_integration" "this" {
   uri                     = module.lambda.invoke_arn
 }
 
+resource "aws_api_gateway_method" "root" {
+  rest_api_id = aws_api_gateway_rest_api.this.id
+  resource_id = aws_api_gateway_rest_api.this.root_resource_id
+  http_method = "ANY"
+  #tfsec:ignore:aws-api-gateway-no-public-access
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "root" {
+  rest_api_id             = aws_api_gateway_rest_api.this.id
+  resource_id             = aws_api_gateway_rest_api.this.root_resource_id
+  http_method             = aws_api_gateway_method.root.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = module.lambda.invoke_arn
+}
