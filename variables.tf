@@ -41,3 +41,24 @@ variable "hostname" {
   type        = string
 }
 
+variable "auth_source_bucket" {
+  description = "Bucket to use for loading Auth Lambda source ZIP"
+  type        = string
+  default     = ""
+}
+
+variable "auth_source_version" {
+  description = "Version of Auth Lambda ZIP to use"
+  type        = string
+}
+
+variable "auth_environment_variables" {
+  description = "Variables to provide for Auth Lambda environment"
+  type        = map(string)
+  default     = {}
+}
+
+variable "auth_access_policy_document" {
+  description = "IAM policy provided to Auth Lambda role"
+  type        = string
+}

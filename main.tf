@@ -154,4 +154,28 @@ resource "aws_api_gateway_integration" "root" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = module.lambda.invoke_arn
+  count                   = var.auth_source_bucket == "" ? 0 : 1
+}
+
+resource "aws_api_gateway_authorizer" "this" {
+  name           = "authorizer"
+  rest_api_id    = aws_api_gateway_rest_api.this.id
+  authorizer_uri = module.auth_lambda.invoke_arn
+  count          = var.auth_source_bucket == "" ? 0 : 1
+}
+
+module "auth_lambda" {
+  source  = "armorfret/lambda/aws"
+  version = "0.3.0"
+  count   = var.auth_source_bucket == "" ? 0 : 1
+
+  source_bucket  = var.auth_source_bucket
+  source_version = var.auth_source_version
+  function_name  = var.function_name + "_auth"
+
+  environment_variables = var.auth_environment_variables
+
+  access_policy_document = var.auth_access_policy_document
+
+  source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
 }
