@@ -123,11 +123,11 @@ resource "aws_api_gateway_resource" "this" {
 }
 
 resource "aws_api_gateway_method" "this" {
-  rest_api_id      = aws_api_gateway_rest_api.this.id
-  resource_id      = aws_api_gateway_resource.this.id
-  http_method      = "ANY"
-  authorization    = var.auth_source_bucket == "" ? "NONE" : "CUSTOM"
-  authorization_id = var.auth_source_bucket == "" ? null : aws_api_gateway_authorizer.this[0].id
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_resource.this.id
+  http_method   = "ANY"
+  authorization = var.auth_source_bucket == "" ? "NONE" : "CUSTOM"
+  authorizer_id = var.auth_source_bucket == "" ? null : aws_api_gateway_authorizer.this[0].id
 }
 
 resource "aws_api_gateway_integration" "this" {
@@ -140,11 +140,11 @@ resource "aws_api_gateway_integration" "this" {
 }
 
 resource "aws_api_gateway_method" "root" {
-  rest_api_id      = aws_api_gateway_rest_api.this.id
-  resource_id      = aws_api_gateway_rest_api.this.root_resource_id
-  http_method      = "ANY"
-  authorization    = var.auth_source_bucket == "" ? "NONE" : "CUSTOM"
-  authorization_id = var.auth_source_bucket == "" ? null : aws_api_gateway_authorizer.this[0].id
+  rest_api_id   = aws_api_gateway_rest_api.this.id
+  resource_id   = aws_api_gateway_rest_api.this.root_resource_id
+  http_method   = "ANY"
+  authorization = var.auth_source_bucket == "" ? "NONE" : "CUSTOM"
+  authorizer_id = var.auth_source_bucket == "" ? null : aws_api_gateway_authorizer.this[0].id
 }
 
 resource "aws_api_gateway_integration" "root" {
