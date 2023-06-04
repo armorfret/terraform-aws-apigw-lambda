@@ -171,7 +171,7 @@ module "auth_lambda" {
 
   source_bucket  = var.auth_source_bucket
   source_version = var.auth_source_version
-  function_name  = var.function_name + "_auth"
+  function_name  = "${var.function_name}_auth"
 
   environment_variables = var.auth_environment_variables
 
