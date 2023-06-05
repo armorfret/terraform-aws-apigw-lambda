@@ -158,10 +158,11 @@ resource "aws_api_gateway_integration" "root" {
 }
 
 resource "aws_api_gateway_authorizer" "this" {
-  name           = "authorizer"
-  rest_api_id    = aws_api_gateway_rest_api.this.id
-  authorizer_uri = module.auth_lambda[0].invoke_arn
-  count          = var.auth_source_bucket == "" ? 0 : 1
+  name                             = "authorizer"
+  rest_api_id                      = aws_api_gateway_rest_api.this.id
+  authorizer_uri                   = module.auth_lambda[0].invoke_arn
+  authorizer_result_ttl_in_seconds = var.auth_ttl
+  count                            = var.auth_source_bucket == "" ? 0 : 1
 }
 
 module "auth_lambda" {

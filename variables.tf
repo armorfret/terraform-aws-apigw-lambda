@@ -62,3 +62,9 @@ variable "auth_access_policy_document" {
   description = "IAM policy provided to Auth Lambda role"
   type        = string
 }
+
+variable "auth_ttl" {
+  description = "Cache time for authorizer check"
+  type        = number
+  default     = 300
+}
