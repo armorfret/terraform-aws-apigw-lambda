@@ -154,7 +154,6 @@ resource "aws_api_gateway_integration" "root" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = module.lambda.invoke_arn
-  count                   = var.auth_source_bucket == "" ? 0 : 1
 }
 
 resource "aws_api_gateway_authorizer" "this" {
