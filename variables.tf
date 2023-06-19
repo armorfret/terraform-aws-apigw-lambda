@@ -50,6 +50,7 @@ variable "auth_source_bucket" {
 variable "auth_source_version" {
   description = "Version of Auth Lambda ZIP to use"
   type        = string
+  default     = null
 }
 
 variable "auth_environment_variables" {
@@ -61,6 +62,7 @@ variable "auth_environment_variables" {
 variable "auth_access_policy_document" {
   description = "IAM policy provided to Auth Lambda role"
   type        = string
+  default     = null
 }
 
 variable "auth_ttl" {
