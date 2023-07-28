@@ -9,7 +9,7 @@ terraform {
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.3.0"
+  version = "0.3.1"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -24,7 +24,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.3.0"
+  version   = "0.3."
   hostnames = [var.hostname]
 }
 
@@ -49,9 +49,10 @@ resource "aws_api_gateway_deployment" "this" {
   }
 }
 
-#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "this" {
   name = "${var.function_name}-apigw"
+
+  kms_key_id = var.kms_key_arn == "" ? null : var.kms_key_arn
 }
 
 resource "aws_api_gateway_stage" "this" {
@@ -122,7 +123,7 @@ resource "aws_api_gateway_resource" "this" {
   path_part   = "{path+}"
 }
 
-resource "aws_api_gateway_method" "this" {
+resource "aws_api_gateway_method" "this" { #tfsec:ignore:aws-api-gateway-no-public-access
   rest_api_id   = aws_api_gateway_rest_api.this.id
   resource_id   = aws_api_gateway_resource.this.id
   http_method   = "ANY"
@@ -166,7 +167,7 @@ resource "aws_api_gateway_authorizer" "this" {
 
 module "auth_lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.3.0"
+  version = "0.3.1"
   count   = var.auth_source_bucket == "" ? 0 : 1
 
   source_bucket  = var.auth_source_bucket

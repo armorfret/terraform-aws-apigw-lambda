@@ -70,3 +70,9 @@ variable "auth_ttl" {
   type        = number
   default     = 300
 }
+
+variable "kms_key_arn" {
+  description = "Use custom KMS key for Cloudwatch logs"
+  type        = string
+  default     = ""
+}
