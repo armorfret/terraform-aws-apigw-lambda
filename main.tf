@@ -94,7 +94,7 @@ resource "aws_api_gateway_stage" "this" {
   }
 }
 
-resource "aws_api_gateway_method_settings" "settings" {
+resource "aws_api_gateway_method_settings" "settings" { #trivy:ignore:AVD-AWS-0190
   rest_api_id = aws_api_gateway_rest_api.this.id
   stage_name  = aws_api_gateway_stage.this.stage_name
   method_path = "*/*"
@@ -123,11 +123,11 @@ resource "aws_api_gateway_resource" "this" {
   path_part   = "{path+}"
 }
 
-resource "aws_api_gateway_method" "this" { #tfsec:ignore:aws-api-gateway-no-public-access
+resource "aws_api_gateway_method" "this" {
   rest_api_id   = aws_api_gateway_rest_api.this.id
   resource_id   = aws_api_gateway_resource.this.id
   http_method   = "ANY"
-  authorization = var.auth_source_bucket == "" ? "NONE" : "CUSTOM"
+  authorization = var.auth_source_bucket == "" ? "NONE" : "CUSTOM" #trivy:ignore:AVD-AWS-0004
   authorizer_id = var.auth_source_bucket == "" ? null : aws_api_gateway_authorizer.this[0].id
 }
 
