@@ -9,7 +9,7 @@ terraform {
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.3.1"
+  version = "0.3.2"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -24,7 +24,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.3.1"
+  version   = "0.3.2"
   hostnames = [var.hostname]
 }
 
@@ -167,7 +167,7 @@ resource "aws_api_gateway_authorizer" "this" {
 
 module "auth_lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.3.1"
+  version = "0.3.2"
   count   = var.auth_source_bucket == "" ? 0 : 1
 
   source_bucket  = var.auth_source_bucket
