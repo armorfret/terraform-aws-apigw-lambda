@@ -9,7 +9,7 @@ terraform {
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.5.0"
+  version = "0.5.1"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -22,6 +22,8 @@ module "lambda" {
   source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
 
   cloudwatch_retention_in_days = var.cloudwatch_retention_in_days
+
+  kms_key_arn = var.kms_key_arn
 }
 
 module "certificate" {
@@ -181,7 +183,7 @@ resource "aws_api_gateway_authorizer" "this" {
 
 module "auth_lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.5.0"
+  version = "0.5.1"
   count   = var.auth_source_bucket == "" ? 0 : 1
 
   source_bucket  = var.auth_source_bucket
@@ -195,4 +197,6 @@ module "auth_lambda" {
   source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
 
   cloudwatch_retention_in_days = var.cloudwatch_retention_in_days
+
+  kms_key_arn = var.kms_key_arn
 }
