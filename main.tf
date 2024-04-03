@@ -20,6 +20,8 @@ module "lambda" {
   access_policy_document = var.access_policy_document
 
   source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
+
+  cloudwatch_retention_in_days = var.cloudwatch_retention_in_days
 }
 
 module "certificate" {
@@ -191,4 +193,6 @@ module "auth_lambda" {
   access_policy_document = var.auth_access_policy_document
 
   source_arns = ["${aws_api_gateway_rest_api.this.execution_arn}/*"]
+
+  cloudwatch_retention_in_days = var.cloudwatch_retention_in_days
 }
