@@ -76,3 +76,9 @@ variable "kms_key_arn" {
   type        = string
   default     = ""
 }
+
+variable "cloudwatch_retention_in_days" {
+  description = "Days to retain cloudwatch logs"
+  type        = number
+  default     = 0
+}

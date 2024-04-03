@@ -52,10 +52,22 @@ resource "aws_api_gateway_deployment" "this" {
 resource "aws_cloudwatch_log_group" "this" {
   name = "${var.function_name}-apigw"
 
+  retention_in_days = var.cloudwatch_retention_in_days
+
+  kms_key_id = var.kms_key_arn == "" ? null : var.kms_key_arn
+}
+
+resource "aws_cloudwatch_log_group" "stage" {
+  name = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.this.id}/prod"
+
+  retention_in_days = var.cloudwatch_retention_in_days
+
   kms_key_id = var.kms_key_arn == "" ? null : var.kms_key_arn
 }
 
 resource "aws_api_gateway_stage" "this" {
+  depends_on = [aws_cloudwatch_log_group.stage]
+
   deployment_id        = aws_api_gateway_deployment.this.id
   rest_api_id          = aws_api_gateway_rest_api.this.id
   stage_name           = "prod"
