@@ -2,14 +2,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 }
 
 module "lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.5.1"
+  version = "0.6.0"
 
   source_bucket  = var.source_bucket
   source_version = var.source_version
@@ -28,7 +28,7 @@ module "lambda" {
 
 module "certificate" {
   source    = "armorfret/acm-certificate/aws"
-  version   = "0.3.4"
+  version   = "0.4.0"
   hostnames = [var.hostname]
 }
 
@@ -183,7 +183,7 @@ resource "aws_api_gateway_authorizer" "this" {
 
 module "auth_lambda" {
   source  = "armorfret/lambda/aws"
-  version = "0.5.1"
+  version = "0.6.0"
   count   = var.auth_source_bucket == "" ? 0 : 1
 
   source_bucket  = var.auth_source_bucket
