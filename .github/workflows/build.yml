@@ -1,40 +1,11 @@
 ---
 name: Build
 'on':
-  push:
-    branches:
-    - main
-    tags:
-    - "**"
-  pull_request_target:
+  pull_request:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-22.04
-    env:
-      TERRAFORM_VERSION: 1.2.7
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Set up go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '>=1.19.0'
-    - name: Download Terraform
-      run: "./scripts/download_terraform.sh $TERRAFORM_VERSION"
-    - name: Check format
-      run: "~/tfbin/terraform fmt -write=false -diff=true -check"
-    - name: Run Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'config'
-        hide-progress: false
-        exit-code: '1'
-    - name: Post to hook-exporter
-      run: "./.github/exporter.sh"
-      env:
-        EXPORTER_TOKEN: "${{ secrets.EXPORTER_TOKEN }}"
-        JOB_STATUS: "${{ job.status }}"
-      if: always() && github.ref == 'refs/heads/main'
+    - name: Terraform CI
+      uses: akerl/.github/actions/base-terraform@main
